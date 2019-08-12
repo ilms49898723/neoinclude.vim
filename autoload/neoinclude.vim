@@ -50,7 +50,7 @@ function! neoinclude#initialize() abort
         \ 'java,haskell', '^\s*\<import')
   call neoinclude#util#set_default_dictionary(
         \ 'g:neoinclude#_patterns',
-        \ 'c,cpp', '^\s*#\s*include')
+        \ 'c,cpp,cuda', '^\s*#\s*include')
   call neoinclude#util#set_default_dictionary(
         \ 'g:neoinclude#_patterns',
         \ 'cs', '^\s*\<using')
@@ -105,6 +105,9 @@ function! neoinclude#initialize() abort
         \ 'cpp', ['', 'h', 'hpp', 'hxx'])
   call neoinclude#util#set_default_dictionary(
         \ 'g:neoinclude#_exts',
+        \ 'cuda', ['', 'h', 'hpp', 'hxx'])
+  call neoinclude#util#set_default_dictionary(
+        \ 'g:neoinclude#_exts',
         \ 'perl', ['pm'])
   call neoinclude#util#set_default_dictionary(
         \ 'g:neoinclude#_exts',
@@ -119,7 +122,7 @@ function! neoinclude#initialize() abort
   " Initialize filename include delimiter.
   call neoinclude#util#set_default_dictionary(
         \ 'g:neoinclude#_delimiters',
-        \ 'c,cpp,ruby', '/')
+        \ 'c,cpp,cuda,ruby', '/')
   call neoinclude#util#set_default_dictionary(
         \ 'g:neoinclude#_delimiters',
         \ 'html,xhtml,xml,markdown,mkd', '')
@@ -162,6 +165,11 @@ function! neoinclude#initialize() abort
         \ '--language-force=C++ -R --sort=1 --c++-kinds=+p --fields=+iaS --extra=+q '.
         \ '-I __wur,__THROW,__attribute_malloc__,__nonnull+,'.
         \   '__attribute_pure__,__attribute_warn_unused_result__,__attribute__+')
+  call neoinclude#util#set_default_dictionary(
+        \ 'g:neoinclude#_ctags_arguments', 'cuda',
+        \ '--language-force=C++ -R --sort=1 --c++-kinds=+p --fields=+iaS --extra=+q '.
+        \ '-I __wur,__THROW,__attribute_malloc__,__nonnull+,'.
+        \   '__attribute_pure__,__attribute_warn_unused_result__,__attribute__+')
 
   augroup neoinclude
     autocmd!
@@ -186,12 +194,15 @@ function! neoinclude#set_filetype_paths(bufnr, filetype) abort
   elseif a:filetype ==# 'cpp'
         \ && !has_key(g:neoinclude#paths, 'cpp')
     call s:set_cpp_paths(a:bufnr)
+  elseif a:filetype ==# 'cuda'
+        \ && !has_key(g:neoinclude#paths, 'cuda')
+    call s:set_cuda_paths(a:bufnr)
   endif
 endfunction
 
 function! neoinclude#get_path(bufnr, filetype) abort
   " Don't use global path if it is not C or C++
-  let default = (a:filetype ==# 'c' || a:filetype ==# 'cpp'
+  let default = (a:filetype ==# 'c' || a:filetype ==# 'cpp' || a:filetype ==# 'cuda'
         \ || getbufvar(a:bufnr, '&path') !=# &g:path) ?
         \ getbufvar(a:bufnr, '&path') : '.'
   return neoinclude#util#substitute_path_separator(
@@ -329,6 +340,23 @@ function! s:set_cpp_paths(bufnr) abort
   " Add cpp path.
   call neoinclude#util#set_default_dictionary(
         \ 'g:neoinclude#paths', 'cpp',
+        \ getbufvar(a:bufnr, '&path') .
+        \ ','.join(files, ','))
+endfunction
+
+function! s:set_cuda_paths(bufnr) abort
+  let files = split(glob('/usr/local/include'), '\n')
+        \ + split(glob('/usr/include'), '\n')
+        \ + split(glob('/usr/include/c++/*'), '\n')
+        \ + split(glob('/usr/include/x86_64-linux-gnu/'), '\n')
+        \ + split(glob('/usr/include/x86_64-linux-gnu/c++/*'), '\n')
+        \ + split(glob('/usr/lib/gcc/x86_64-linux-gnu/*/include'), '\n')
+        \ + split(glob('/usr/lib/gcc/x86_64-linux-gnu/*/include-fixed'), '\n')
+  call filter(files, 'isdirectory(v:val)')
+
+  " Add cuda path.
+  call neoinclude#util#set_default_dictionary(
+        \ 'g:neoinclude#paths', 'cuda',
         \ getbufvar(a:bufnr, '&path') .
         \ ','.join(files, ','))
 endfunction
