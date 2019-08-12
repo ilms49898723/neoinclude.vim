@@ -180,7 +180,7 @@ function! neoinclude#set_filetype_paths(bufnr, filetype) abort
     elseif executable('python')
       call s:set_python_paths('python')
     endif
-  elseif a:filetype ==# 'cpp'
+  elseif (a:filetype ==# 'c' || a:filetype ==# 'cpp')
         \ && !has_key(g:neoinclude#paths, 'cpp')
         \ && isdirectory('/usr/include/c++')
     call s:set_cpp_paths(a:bufnr)
