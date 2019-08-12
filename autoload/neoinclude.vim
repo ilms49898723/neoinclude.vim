@@ -300,9 +300,13 @@ function! s:set_python_paths(python_bin) abort
 endfunction
 
 function! s:set_cpp_paths(bufnr) abort
-  let files = split(glob('/usr/include/*'), '\n')
+  let files = split(glob('/usr/local/include'), '\n')
+        \ + split(glob('/usr/include'), '\n')
         \ + split(glob('/usr/include/c++/*'), '\n')
-        \ + split(glob('/usr/include/*/c++/*'), '\n')
+        \ + split(glob('/usr/include/x86_64-linux-gnu/'), '\n')
+        \ + split(glob('/usr/include/x86_64-linux-gnu/c++/*'), '\n')
+        \ + split(glob('/usr/lib/gcc/x86_64-linux-gnu/*/include'), '\n')
+        \ + split(glob('/usr/lib/gcc/x86_64-linux-gnu/*/include-fixed'), '\n')
   call filter(files, 'isdirectory(v:val)')
 
   " Add cpp path.
