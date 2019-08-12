@@ -21,6 +21,15 @@ class Source(Base):
         self.events = None
         self.is_bytepos = True
         self.min_pattern_length = 0
+        self.rank = 500
+
+        self.pyregex = re.compile('(^\s*import\s+|^\s*from\s+)')
+        self.pyregex_ignore = re.compile('('
+                '^\s*import\s+\S+\s+$' '|'
+                '^\s*from\s+\S+\s+$' '|'
+                '^\s*from\s+\S+\s+import\s+\S+\s+$' '|'
+                '^\s*import\s+\S+\s+\S+.*$' '|'
+                '^\s*from\s+\S+\s+import\s+\S+\s+\S+.*$' ')')
 
     def get_complete_position(self, context):
         if context['filetype'] != 'python':
@@ -41,7 +50,9 @@ class Source(Base):
 
         if current_line is None:
             return []
-        if not re.match('(^\s*import\s+|^\s*from\s+)', current_line):
+        if not self.pyregex.match(current_line):
+            return []
+        if self.pyregex_ignore.match(current_line):
             return []
 
         script = jedi.Script(current_line, 1, len(current_line), '')
@@ -49,10 +60,9 @@ class Source(Base):
 
         candidates = []
         for completion in completions:
-            if completion.name == 'import' or completion.name == 'as':
-                continue
             candidates.append({
                 'word': completion.name,
                 'kind': 'jedi'})
+        candidates = sorted(candidates, key=lambda x: x['word'].swapcase())
 
         return candidates
