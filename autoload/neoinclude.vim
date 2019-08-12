@@ -180,9 +180,11 @@ function! neoinclude#set_filetype_paths(bufnr, filetype) abort
     elseif executable('python')
       call s:set_python_paths('python')
     endif
-  elseif (a:filetype ==# 'c' || a:filetype ==# 'cpp')
+  elseif a:filetype ==# 'c'
+        \ && !has_key(g:neoinclude#paths, 'c')
+    call s:set_c_paths(a:bufnr)
+  elseif a:filetype ==# 'cpp'
         \ && !has_key(g:neoinclude#paths, 'cpp')
-        \ && isdirectory('/usr/include/c++')
     call s:set_cpp_paths(a:bufnr)
   endif
 endfunction
@@ -297,6 +299,21 @@ function! s:set_python_paths(python_bin) abort
         \ split(path, ',', 1), "v:val != ''")), ',')
   call neoinclude#util#set_default_dictionary(
         \ 'g:neoinclude#paths', 'python', path)
+endfunction
+
+function! s:set_c_paths(bufnr) abort
+  let files = split(glob('/usr/local/include'), '\n')
+        \ + split(glob('/usr/include'), '\n')
+        \ + split(glob('/usr/include/x86_64-linux-gnu/'), '\n')
+        \ + split(glob('/usr/lib/gcc/x86_64-linux-gnu/*/include'), '\n')
+        \ + split(glob('/usr/lib/gcc/x86_64-linux-gnu/*/include-fixed'), '\n')
+  call filter(files, 'isdirectory(v:val)')
+
+  " Add cpp path.
+  call neoinclude#util#set_default_dictionary(
+        \ 'g:neoinclude#paths', 'c',
+        \ getbufvar(a:bufnr, '&path') .
+        \ ','.join(files, ','))
 endfunction
 
 function! s:set_cpp_paths(bufnr) abort
