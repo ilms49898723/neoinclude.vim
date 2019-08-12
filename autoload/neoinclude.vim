@@ -309,7 +309,7 @@ function! s:set_c_paths(bufnr) abort
         \ + split(glob('/usr/lib/gcc/x86_64-linux-gnu/*/include-fixed'), '\n')
   call filter(files, 'isdirectory(v:val)')
 
-  " Add cpp path.
+  " Add c path.
   call neoinclude#util#set_default_dictionary(
         \ 'g:neoinclude#paths', 'c',
         \ getbufvar(a:bufnr, '&path') .
