@@ -352,6 +352,7 @@ function! s:set_cuda_paths(bufnr) abort
         \ + split(glob('/usr/include/x86_64-linux-gnu/c++/*'), '\n')
         \ + split(glob('/usr/lib/gcc/x86_64-linux-gnu/*/include'), '\n')
         \ + split(glob('/usr/lib/gcc/x86_64-linux-gnu/*/include-fixed'), '\n')
+        \ + split(glob('/usr/local/cuda*/include'), '\n')
   call filter(files, 'isdirectory(v:val)')
 
   " Add cuda path.
