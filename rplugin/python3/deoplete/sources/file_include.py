@@ -56,9 +56,9 @@ class Source(Base):
 
             ft = context['filetype']
             exts = {
-                'c': ['h'],
-                'cpp': ['', 'h', 'hpp', 'hxx'],
-                'cuda': ['', 'h', 'hpp', 'hxx']
+                'c': ['.h'],
+                'cpp': ['', '.h', '.hpp', '.hxx'],
+                'cuda': ['', '.h', '.hpp', '.hxx']
             }
 
             self.build_clang_cache(ft, exts[ft], paths)
@@ -89,8 +89,6 @@ class Source(Base):
 
                 for fn in files:
                     ext = os.path.splitext(fn)[1]
-                    if ext.startswith('.'):
-                        ext = ext[1:]
                     if ext not in exts:
                         continue
 
