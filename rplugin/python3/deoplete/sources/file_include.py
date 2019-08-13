@@ -23,6 +23,8 @@ class Source(Base):
         self.min_pattern_length = 0
         self.rank = 500
 
+        self.ignore_dirs = ['.git']
+
         self.clang_includes = dict()
         self.clang_pattern = re.compile('^\s*#\s*include\s*[<"]([^>"]*)')
         self.clangregex = re.compile('^\s*#\s*include\s*[<"]')
@@ -76,6 +78,16 @@ class Source(Base):
                 if root in visited:
                     continue
                 visited.add(root)
+
+                ignored = False
+                splits = root.split('/')
+                for ignore_dir in self.ignore_dirs:
+                    if ignore_dir in splits:
+                        ignored = True
+                        break
+                if ignored:
+                    continue
+
                 for fn in files:
                     ext = os.path.splitext(fn)[1]
                     if ext.startswith('.'):
