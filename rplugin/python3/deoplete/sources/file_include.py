@@ -26,7 +26,7 @@ class Source(Base):
         self.clang_includes = dict()
         self.clang_pattern = re.compile('^\s*#\s*include\s*[<"]([^>"]*)')
         self.clangregex = re.compile('^\s*#\s*include\s*[<"]')
-        self.clangregex_ignore = re.compile('^\s*#\s*include\s*[<"].*[>"]\s*$')
+        self.clangregex_ignore = re.compile('^\s*#\s*include\s*[<"].*[>"].*$')
 
         self.pyregex = re.compile('(^\s*import\s+|^\s*from\s+)')
         self.pyregex_ignore = re.compile('('
