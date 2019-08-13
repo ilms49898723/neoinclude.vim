@@ -31,6 +31,11 @@ class Source(Base):
                 '^\s*import\s+\S+\s+\S+.*$' '|'
                 '^\s*from\s+\S+\s+import\s+\S+\s+\S+.*$' ')')
 
+    def on_init(self, context):
+        if context['filetype'] == 'python':
+            script = jedi.Script('import ', 1, len('import '), '')
+            script.completions()
+
     def get_complete_position(self, context):
         if context['filetype'] != 'python':
             return self.vim.call(
