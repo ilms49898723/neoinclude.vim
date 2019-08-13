@@ -23,7 +23,7 @@ class Source(Base):
         self.min_pattern_length = 0
         self.rank = 500
 
-        self.ignore_dirs = ['.git']
+        self.ignore_dirs = set(['.git'])
 
         self.clang_includes = dict()
         self.clang_pattern = re.compile('^\s*#\s*include\s*[<"]([^>"]*)')
@@ -80,9 +80,8 @@ class Source(Base):
                 visited.add(root)
 
                 ignored = False
-                splits = root.split('/')
-                for ignore_dir in self.ignore_dirs:
-                    if ignore_dir in splits:
+                for split in root.split('/'):
+                    if split in self.ignore_dirs:
                         ignored = True
                         break
                 if ignored:
