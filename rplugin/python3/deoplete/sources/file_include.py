@@ -26,17 +26,17 @@ class Source(Base):
         self.ignore_dirs = set(['.git'])
 
         self.clang_includes = dict()
-        self.clang_pattern = re.compile('^\s*#\s*include\s*[<"]([^>"]*)')
-        self.clangregex = re.compile('^\s*#\s*include\s*[<"]')
-        self.clangregex_ignore = re.compile('^\s*#\s*include\s*[<"].*[>"].*$')
+        self.clang_pattern = re.compile(r'^\s*#\s*include\s*[<"]([^>"]*)')
+        self.clangregex = re.compile(r'^\s*#\s*include\s*[<"]')
+        self.clangregex_ignore = re.compile(r'^\s*#\s*include\s*[<"].*[>"].*$')
 
-        self.pyregex = re.compile('(^\s*import\s+|^\s*from\s+)')
+        self.pyregex = re.compile(r'(^\s*import\s+|^\s*from\s+)')
         self.pyregex_ignore = re.compile('('
-                '^\s*import\s+\S+\s+$' '|'
-                '^\s*from\s+\S+\s+$' '|'
-                '^\s*from\s+\S+\s+import\s+\S+\s+$' '|'
-                '^\s*import\s+\S+\s+\S+.*$' '|'
-                '^\s*from\s+\S+\s+import\s+\S+\s+\S+.*$' ')')
+                r'^\s*import\s+\S+\s+$' '|'
+                r'^\s*from\s+\S+\s+$' '|'
+                r'^\s*from\s+\S+\s+import\s+\S+\s+$' '|'
+                r'^\s*import\s+\S+\s+\S+.*$' '|'
+                r'^\s*from\s+\S+\s+import\s+\S+\s+\S+.*$' ')')
 
     def on_init(self, context):
         self.vim.call('neoinclude#initialize')
