@@ -1,6 +1,7 @@
 #=============================================================================
 # FILE: file_include.py
 # AUTHOR:  Shougo Matsushita <Shougo.Matsu at gmail.com>
+# MODIFIED: LittleBird
 # License: MIT license
 #=============================================================================
 

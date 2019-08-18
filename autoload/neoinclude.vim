@@ -1,6 +1,7 @@
 "=============================================================================
 " FILE: neoinclude.vim
 " AUTHOR:  Shougo Matsushita <Shougo.Matsu at gmail.com>
+" MODIFIED: LittleBird
 " License: MIT license
 "=============================================================================
 
