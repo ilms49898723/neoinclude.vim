@@ -5,10 +5,9 @@
 # License: MIT license
 #=============================================================================
 
+import jedi
 import os
 import re
-
-import jedi
 
 from deoplete.base.source import Base
 
