@@ -8,6 +8,7 @@
 import jedi
 import os
 import re
+import sys
 
 from deoplete.base.source import Base
 
@@ -142,7 +143,8 @@ class Source(Base):
         if self.pyregex_ignore.match(current_line):
             return []
 
-        script = jedi.Script(current_line, 1, len(current_line), '')
+        current_filepath = self.vim.call('expand', '%:p')
+        script = jedi.Script(current_line, 1, len(current_line), current_filepath)
         completions = script.completions()
 
         candidates = []
