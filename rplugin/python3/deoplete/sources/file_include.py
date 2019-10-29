@@ -43,7 +43,8 @@ class Source(Base):
 
     def on_event(self, context):
         if context['filetype'] == 'python':
-            script = jedi.Script('import ', 1, len('import '), '')
+            current_filepath = self.vim.call('expand', '%:p')
+            script = jedi.Script('import ', 1, len('import '), current_filepath)
             script.completions()
 
         elif context['filetype'] in ['c', 'cpp', 'cuda']:
