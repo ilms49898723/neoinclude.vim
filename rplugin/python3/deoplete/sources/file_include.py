@@ -45,8 +45,11 @@ class Source(Base):
     def on_event(self, context):
         if context['filetype'] == 'python':
             current_filepath = self.vim.call('expand', '%:p')
-            script = jedi.Script('import ', 1, len('import '), current_filepath)
-            script.completions()
+            try:
+                script = jedi.Script('import ', 1, len('import '), current_filepath)
+                script.completions()
+            except:
+                pass
 
         elif context['filetype'] in ['c', 'cpp', 'cuda']:
             self.vim.call('neoinclude#set_filetype_paths', context['bufnr'], context['filetype'])
@@ -137,17 +140,20 @@ class Source(Base):
         current_line = context.get('input', None)
 
         if current_line is None:
-            return []
+            return list()
         if not self.pyregex.match(current_line):
-            return []
+            return list()
         if self.pyregex_ignore.match(current_line):
-            return []
+            return list()
 
         current_filepath = self.vim.call('expand', '%:p')
-        script = jedi.Script(current_line, 1, len(current_line), current_filepath)
-        completions = script.completions()
+        try:
+            script = jedi.Script(current_line, 1, len(current_line), current_filepath)
+            completions = script.completions()
+        except:
+            completions = list()
 
-        candidates = []
+        candidates = list()
         for completion in completions:
             candidates.append({
                 'word': completion.name,
@@ -160,17 +166,17 @@ class Source(Base):
         current_line = context.get('input', None)
 
         if current_line is None:
-            return []
+            return list()
         if not self.clangregex.match(current_line):
-            return []
+            return list()
         if self.clangregex_ignore.match(current_line):
-            return []
+            return list()
 
         matches = self.clang_pattern.match(current_line)
         if not matches:
-            return []
+            return list()
 
-        candidates = []
+        candidates = list()
         tokens = matches.group(1).split('/')
 
         node = self.clang_includes
@@ -178,7 +184,7 @@ class Source(Base):
             if token in node and token != '':
                 node = node[token]
             else:
-                return []
+                return list()
         files = sorted(list(node['']), key=lambda x: x.swapcase())
         dirs = sorted(list(node.keys()), key=lambda x: x.swapcase())[1:]
 
